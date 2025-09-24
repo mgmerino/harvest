@@ -1,0 +1,285 @@
+:root {
+  --bg: #0f0f12;
+  --panel: #17171c;
+  --ink: #e6e6f0;
+  --muted: #a9acc0;
+  --accent: #6ee7b7;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --grid: 4;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+}
+
+header {
+  grid-column: 1/-1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: var(--panel);
+  border: 1px solid #262632;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.pill small {
+  display: block;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.btn {
+  cursor: pointer;
+  border: 1px solid #2b2b38;
+  background: #1b1b23;
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: #1f2e26;
+  border-color: #254335;
+}
+
+.btn.warn {
+  background: #2a2316;
+  border-color: #3d2e12;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #252535;
+  border-radius: 16px;
+  padding: 12px;
+  color: #e6e6f0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid), minmax(0, 1fr));
+  gap: 6px;
+}
+
+.tile {
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a2a39;
+  border-radius: 12px;
+  background: #14141a;
+  position: relative;
+}
+
+.tile .emoji {
+  font-size: 28px;
+}
+
+.tile .badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 9px;
+  font-family: monospace;
+  background: #0009;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.tile .badge.low-water {
+  background: var(--danger);
+  color: white;
+  font-weight: bold;
+}
+
+.tile button {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.tile:focus-within {
+  outline: 2px solid #3a3a55;
+}
+
+.section-title {
+  margin: 6px 0 8px;
+  opacity: 0.9;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px dashed #2a2a38;
+  border-radius: 10px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.shop {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  background: transparent;
+}
+
+dialog .modal {
+  background: #2d3c33;
+  border: 1px solid #2a2a3a;
+  border-radius: 16px;
+  width: min(720px, 92vw);
+  padding: 16px;
+  color: #e6e6f0;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.kbd {
+  background: #111114;
+  border: 1px solid #2c2c3c;
+  padding: 0 6px;
+  border-radius: 6px;
+}
+
+footer {
+  grid-column: 1/-1;
+  opacity: 0.65;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.good {
+  color: var(--accent);
+}
+
+#pauseOverlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #0b0b12cc;
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 800;
+}
+
+body.paused #pauseOverlay {
+  display: flex;
+}
+
+body.paused .panel,
+body.paused .grid,
+body.paused header .btn {
+  pointer-events: none;
+}
+
+body.paused #btnPause {
+  pointer-events: auto;
+}
+
+body.paused .tile {
+  filter: grayscale(0.6) opacity(0.8);
+}
+
+/* Posicionamiento en grid de paneles */
+aside.panel {
+  grid-column: 1;
+}
+
+.right-column {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+#ownedPanel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+main.panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
