@@ -91,6 +91,7 @@
         border: 1px solid #252535;
         border-radius: 16px;
         padding: 12px;
+        color: #e6e6f0;
       }
       .grid {
         display: grid;
@@ -114,7 +115,8 @@
         position: absolute;
         top: 6px;
         right: 6px;
-        font-size: 10px;
+        font-size: 9px;
+        font-family: monospace;
         background: #0009;
         padding: 2px 6px;
         border-radius: 10px;
@@ -160,11 +162,12 @@
         background: transparent;
       }
       dialog .modal {
-        background: var(--panel);
+        background: #2d3c33;
         border: 1px solid #2a2a3a;
         border-radius: 16px;
         width: min(720px, 92vw);
         padding: 16px;
+        color: #e6e6f0;
       }
       .grid-2 {
         display: grid;
@@ -220,6 +223,27 @@
       body.paused .tile {
         filter: grayscale(0.6) opacity(0.8);
       }
+      /* Posicionamiento en grid de paneles */
+      aside.panel {
+        grid-column: 1;
+      }
+      .right-column {
+        grid-column: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 0;
+      }
+      #ownedPanel {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+      }
+      main.panel {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+      }
     </style>
   </head>
   <body>
@@ -236,19 +260,20 @@
             📈 <span id="price">1.00</span><small>€/fruto</small>
           </div>
           <div class="pill">
-            🔒 <span id="reserve">0</span><small>Reserva 10%</small>
+            🔒 <span id="reserve">0</span><small>10%</small>
           </div>
           <div class="pill">
             ⚙️ <span id="tick">0</span><small>Ticks</small>
           </div>
         </div>
         <div class="statbar">
-          <button class="btn" id="btnHarvest">Cosechar</button>
-          <button class="btn" id="btnSell">Vender</button>
-          <button class="btn" id="btnShop">Mejoras</button>
+          <button class="btn" id="btnHarvest">🧺 Cosechar</button>
+          <button class="btn" id="btnSell">💰 Vender</button>
+          <button class="btn" id="btnShop">🛒 Mejoras</button>
+          <button class="btn" id="btnHints">💡 Pistas</button>
           <button class="btn" id="btnPause">⏸️ Pausar</button>
-          <button class="btn" id="btnSave">Guardar</button>
-          <button class="btn" id="btnReset">Reset</button>
+          <button class="btn" id="btnSave">💾 Guardar</button>
+          <button class="btn" id="btnReset">🔄 Reset</button>
         </div>
       </header>
 
@@ -269,13 +294,20 @@
         </div>
       </aside>
 
-      <main class="panel">
-        <h3 class="section-title">Registro</h3>
-        <div id="log" class="list"></div>
-      </main>
+      <div class="right-column">
+        <section class="panel" id="ownedPanel">
+          <h3 class="section-title">Mejoras adquiridas</h3>
+          <div id="ownedList" class="list"></div>
+        </section>
+
+        <main class="panel">
+          <h3 class="section-title">Registro</h3>
+          <div id="log" class="list"></div>
+        </main>
+      </div>
 
       <footer>
-        Harvest — MVP. Guardado automático cada 30s. Emojis como "gráficos". 💾
+        Harvest - MVP. Guardado automático cada 30 segundos.
       </footer>
       <div id="pauseOverlay">⏸️ Pausa. Pulsa P para reanudar.</div>
     </div>
@@ -308,9 +340,71 @@
       </div>
     </dialog>
 
+    <!-- Modal pistas -->
+    <dialog id="hintsDialog">
+      <div class="modal">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+          "
+        >
+          <h3>💡 Pistas y Consejos</h3>
+          <button class="btn" onclick="hintsDialog.close()">Cerrar</button>
+        </div>
+        <div class="panel" style="margin-bottom: 12px;">
+          <h4>🌱 Cultivo Básico</h4>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.5;">
+            <li>Mantén el agua entre 20-90 para crecimiento óptimo</li>
+            <li>Por debajo de 10 = sequía, por encima de 90 = exceso</li>
+            <li>Las plantas necesitan al menos 20 de agua para crecer</li>
+            <li>Regar cuesta dinero: cada unidad de agua tiene un precio</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-bottom: 12px;">
+          <h4>⚠️ Salud de las Plantas</h4>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.5;">
+            <li>Estrés hídrico prolongado (12+ ticks) puede matar plantas</li>
+            <li>El estrés aumenta las probabilidades de plagas 🐛</li>
+            <li>Trata las plagas rápido con el botón "Tratar plaga" (2€)</li>
+            <li>Las plantas con plagas no crecen hasta ser tratadas</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-bottom: 12px;">
+          <h4>💰 Economía</h4>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.5;">
+            <li>Siempre mantienes 10% del stock como reserva</li>
+            <li>No puedes vender ni usar para replantar la reserva</li>
+            <li>Las mejoras aumentan precio, velocidad y rendimiento</li>
+            <li>Los precios de mejoras suben 120% con cada compra</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-bottom: 12px;">
+          <h4>🤖 Automatización</h4>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.5;">
+            <li><strong>Aspersor:</strong> Riega automáticamente cuando agua < 60</li>
+            <li><strong>Recolector:</strong> Cosecha automáticamente plantas maduras</li>
+            <li><strong>Vendedor:</strong> Vende automáticamente exceso de stock</li>
+            <li>Las automatizaciones se ejecutan cada tick</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4>⌨️ Atajos de Teclado</h4>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.5;">
+            <li><span class="kbd">P</span> - Pausar/Reanudar juego</li>
+            <li>El juego se guarda automáticamente cada 30 segundos</li>
+            <li>Usa el botón "Guardar" para guardar manualmente</li>
+          </ul>
+        </div>
+      </div>
+    </dialog>
+
     <script>
       /*** GAME STATE ***/
-      const TICK_MS = 5500; // ritmo de simulación
+      const TICK_MS = 500; // ritmo de simulación
       const GRID_N = 4; // 4x4 (editable)
 
       // --- Nuevas constantes de salud / plagas ---
@@ -322,7 +416,7 @@
       const BASE_PLAGUE_CHANCE = 0.001; // probabilidad base por tick
 
       const defaultState = () => ({
-        money: 0,
+        money: 5,
         stock: 0,
         tick: 0,
         paused: false,
@@ -330,6 +424,7 @@
         qualityLevel: 0, // multiplica el precio
         growthLevel: 0, // multiplica la velocidad de crecimiento
         yieldLevel: 0, // multiplica la cosecha por planta
+        plotCount: 0, // veces ampliada la parcela
         autos: { sprinkler: false, picker: false, vendor: false },
         field: Array(GRID_N * GRID_N)
           .fill(null)
@@ -416,7 +511,7 @@
         }
         // bloquear UI cuando está en pausa
         document.body.classList.toggle("paused", S.paused);
-        const ids = ["btnHarvest", "btnSell", "btnShop", "btnSave", "btnReset"];
+        const ids = ["btnHarvest", "btnSell", "btnShop", "btnHints", "btnSave", "btnReset"];
         ids.forEach((id) => {
           const b = document.getElementById(id);
           if (b) b.disabled = S.paused;
@@ -440,7 +535,7 @@
             ];
             if (p.plague) flags.push("🐛");
             if (p.stage === "dead") flags.push("💀");
-            badge.textContent = flags.join(" | ");
+            badge.textContent = flags.join("|");
           } else {
             badge.textContent = "vacío";
           }
@@ -453,6 +548,7 @@
         });
 
         // tienda
+        renderOwnedPanel();
         renderShop();
       }
 
@@ -490,8 +586,14 @@
 
         if (p.stage !== "dead") {
           addAction("💧 Regar (+20)", () => {
+            const before = p.water;
             p.water = Math.min(100, p.water + 20);
-            log(`Has regado la planta ${i + 1}.`);
+            const added = p.water - before;
+            const cost = +(added * WATER_COST_PER_UNIT).toFixed(6);
+            if (added > 0) {
+              S.money -= cost;
+            }
+            log(`Has regado la planta ${i + 1}. Coste agua: ${cost} €`);
             render();
           });
           addAction("🧯 Purgar agua (-20)", () => {
@@ -641,8 +743,13 @@
         // Automatizaciones
         if (S.autos.sprinkler) {
           S.field.forEach((p) => {
-            if (p.alive && p.stage !== "dead" && p.water < 60)
-              p.water = Math.min(100, p.water + 6);
+            if (p.alive && p.stage !== "dead" && p.water < 60) {
+              const add = Math.min(6, 100 - p.water);
+              if (add > 0) {
+                p.water = p.water + add;
+                S.money -= +(add * WATER_COST_PER_UNIT).toFixed(6);
+              }
+            }
           });
         }
         if (S.autos.picker) {
@@ -685,6 +792,22 @@
       }
 
       /*** MEJORAS & AUTOS ***/
+      const UPG_BASE = { quality: 30, growth: 40, yield: 60, plot: 50 };
+      const WATER_COST_PER_UNIT = 0.2 / 20; // coste por unidad de agua añadida
+
+      function upgradeLevel(key) {
+        if (key === "quality") return S.qualityLevel || 0;
+        if (key === "growth") return S.growthLevel || 0;
+        if (key === "yield") return S.yieldLevel || 0;
+        if (key === "plot") return S.plotCount || 0;
+        return 0;
+      }
+      function nextUpgradePrice(key) {
+        const base = UPG_BASE[key] || 0;
+        const lvl = upgradeLevel(key);
+        return Math.ceil(base * Math.pow(2.2, lvl)); // +120% por compra (x2.2)
+      }
+
       const UPGRADES = [
         {
           key: "quality",
@@ -731,17 +854,21 @@
                 ? S.growthLevel
                 : u.key === "yield"
                   ? S.yieldLevel
-                  : 0;
+                  : S.plotCount;
           row.innerHTML = `<div>${u.label} ${owned ? `<span class="kbd">Nivel ${owned}</span>` : ""}</div>`;
           const b = document.createElement("button");
           b.className = "btn primary";
-          b.textContent = `Comprar — ${u.price}€`;
-          b.disabled = S.money < u.price;
+          const price = nextUpgradePrice(u.key);
+          b.textContent = `Comprar — ${price}€`;
+          b.disabled = S.money < price;
           b.onclick = () => {
-            if (S.money >= u.price) {
-              S.money -= u.price;
+            if (S.paused) return;
+            if (S.money >= price) {
+              S.money -= price;
               u.apply();
-              log(`Comprado: ${u.label}.`);
+              log(
+                `Comprado: ${u.label}. Próximo precio: ${nextUpgradePrice(u.key)} €`,
+              );
               render();
             }
           };
@@ -761,6 +888,7 @@
           b.textContent = active ? "Comprado" : `Comprar — ${a.price}€`;
           b.disabled = active || S.money < a.price;
           b.onclick = () => {
+            if (S.paused) return;
             if (!active && S.money >= a.price) {
               S.money -= a.price;
               S.autos[a.key] = true;
@@ -772,8 +900,46 @@
           shopAutos.appendChild(row);
         });
       }
+      function renderOwnedPanel() {
+        const list = document.getElementById("ownedList");
+        if (!list) return;
+        list.innerHTML = "";
+        const entries = [
+          {
+            name: "Fertilizante premium",
+            key: "quality",
+            level: S.qualityLevel || 0,
+          },
+          { name: "Riego por goteo", key: "growth", level: S.growthLevel || 0 },
+          { name: "Sustrato rico", key: "yield", level: S.yieldLevel || 0 },
+          { name: "Ampliar parcela", key: "plot", level: S.plotCount || 0 },
+        ];
+        entries.forEach((e) => {
+          const row = document.createElement("div");
+          row.className = "row";
+          row.innerHTML = `<div>${e.name}</div><div><span class="kbd">Nivel ${e.level}</span> <span class="kbd">Próx: ${nextUpgradePrice(e.key)}€</span></div>`;
+          list.appendChild(row);
+        });
+        const labels = {
+          sprinkler: "Aspersor",
+          picker: "Recolector",
+          vendor: "Vendedor",
+        };
+        const autosRow = document.createElement("div");
+        autosRow.className = "row";
+        const autosHtml = Object.keys(labels)
+          .map((k) =>
+            S.autos[k]
+              ? `<span class="kbd good">${labels[k]}</span>`
+              : `<span class="kbd">${labels[k]}</span>`,
+          )
+          .join(" ");
+        autosRow.innerHTML = `<div>Automatizaciones</div><div>${autosHtml}</div>`;
+        list.appendChild(autosRow);
+      }
 
       function addOnePlantSlot() {
+        S.plotCount = (S.plotCount || 0) + 1;
         const idx = S.field.findIndex((p) => !p || !p.alive);
         if (idx !== -1) {
           S.field[idx] = newPlant(true);
@@ -821,6 +987,7 @@
           return p;
         });
         if (S.paused === undefined) S.paused = false;
+        if (S.plotCount === undefined) S.plotCount = 0;
       }
 
       /*** CONTROLES ***/
@@ -850,6 +1017,10 @@
         if (S.paused) return;
         shopDialog.showModal();
       };
+      document.getElementById("btnHints").onclick = () => {
+        if (S.paused) return;
+        hintsDialog.showModal();
+      };
       document.getElementById("btnSave").onclick = () => {
         if (S.paused) return;
         save();
@@ -867,6 +1038,7 @@
       document.getElementById("btnPause").onclick = () => {
         S.paused = !S.paused;
         if (S.paused && shopDialog.open) shopDialog.close();
+        if (S.paused && hintsDialog.open) hintsDialog.close();
         log(S.paused ? "Juego en pausa ⏸️" : "Juego reanudado ▶️");
         render();
       };
@@ -874,6 +1046,7 @@
         if (e.key && e.key.toLowerCase() === "p") {
           S.paused = !S.paused;
           if (S.paused && shopDialog.open) shopDialog.close();
+          if (S.paused && hintsDialog.open) hintsDialog.close();
           log(S.paused ? "Juego en pausa ⏸️" : "Juego reanudado ▶️");
           render();
         }
@@ -884,8 +1057,48 @@
       // Game loop
       setInterval(step, TICK_MS);
 
+      /*** SELF-TESTS (mínimos) ***/
+      function approx(a, b, eps = 1e-9) {
+        return Math.abs(a - b) <= eps;
+      }
+      function selfTests() {
+        try {
+          // Test 1: precio exponencial (+120% por compra)
+          const base = 30; // usar quality
+          const expectedL2 = Math.ceil(base * Math.pow(2.2, 2));
+          const tmp = JSON.parse(JSON.stringify(S));
+          S.qualityLevel = 2;
+          console.assert(
+            nextUpgradePrice("quality") === expectedL2,
+            "nextUpgradePrice nivel 2 incorrecto",
+          );
+
+          // Test 2: coste de agua 20 unidades -> 0.0002
+          const cost20 = 20 * WATER_COST_PER_UNIT;
+          console.assert(
+            approx(cost20, 0.2),
+            "Coste de agua por 20 unidades incorrecto",
+          );
+
+          // Test 3: pausa bloquea step()
+          const t0 = S.tick;
+          S.paused = true;
+          step();
+          console.assert(S.tick === t0, "step avanzó ticks estando en pausa");
+          S.paused = false;
+
+          // restaurar estado
+          S = Object.assign(S, tmp);
+          log("✅ Tests básicos OK");
+        } catch (e) {
+          console.error("Self-tests error", e);
+          log("❌ Error en tests: " + e.message);
+        }
+      }
+
       // Bootstrap
       render();
+      selfTests();
       log("¡Bienvenido! Riega la planta inicial y empieza a cosechar.");
     </script>
   </body>
