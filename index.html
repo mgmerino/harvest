@@ -37,34 +37,33 @@
         </div>
       </header>
 
-      <aside class="panel">
+      <aside class="game-panel">
         <h3 class="section-title">Parcela (<span id="sizeLabel"></span>)</h3>
         <div class="grid" id="grid"></div>
         <p class="hint">
           Consejo: haz clic en una planta para ver su estado y acciones (regar,
           replantar, etc.).
         </p>
-        <div id="selected" class="panel" style="margin-top: 10px">
-          <h3>Planta seleccionada</h3>
-          <div id="plantInfo" class="muted">Ninguna.</div>
-          <div
-            id="actions"
-            style="display: flex; gap: 8px; margin-top: 8px"
-          ></div>
-        </div>
       </aside>
 
-      <div class="right-column">
+      <main class="game-panel">
+        <section class="panel" id="selectedPanel">
+          <h3 class="section-title">Planta seleccionada</h3>
+            <div id="plantInfo" class="muted">Ninguna.</div>
+            <div
+              id="actions"
+              style="display: flex; gap: 8px; margin-top: 8px"
+            ></div>
+        </section>
         <section class="panel" id="ownedPanel">
           <h3 class="section-title">Mejoras adquiridas</h3>
           <div id="ownedList" class="list"></div>
         </section>
-
-        <main class="panel">
+        <section class="panel" id="logPanel">
           <h3 class="section-title">Registro</h3>
           <div id="log" class="list"></div>
-        </main>
-      </div>
+        </section>
+      </main>
 
       <footer>
         Harvest - MVP. Guardado automático cada 30 segundos.
