@@ -40,10 +40,44 @@ body {
 header {
   grid-column: 1/-1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
+  gap: 16px;
+  align-items: flex-start;
   justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.title pre {
+  font-size: 0.7rem;
+  line-height: 1;
+  margin: 0;
+  color: var(--accent);
+  font-family: monospace;
+}
+
+.title span {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .statbar {
@@ -300,4 +334,21 @@ main.game-panel {
 #logPanel .list {
   max-height: 100%;
   overflow-y: auto;
+}
+
+/* Responsive behavior for title */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .title {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .title pre {
+    font-size: 0.6rem;
+  }
 }
