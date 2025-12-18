@@ -9,62 +9,72 @@
   <body>
     <div class="wrap">
       <header>
-        <div class="statbar">
-          <div class="pill">
-            💰 <span id="money">0</span><small>Dinero</small>
+        <div class="header-left">
+          <div class="statbar">
+            <div class="pill">
+              💰 <span id="money">0</span><small>Dinero</small>
+            </div>
+            <div class="pill">
+              🍓 <span id="stock">0</span><small>Stock</small>
+            </div>
+            <div class="pill">
+              📈 <span id="price">1.00</span><small>€/fruto</small>
+            </div>
+            <div class="pill">
+              🔒 <span id="reserve">0</span><small>10%</small>
+            </div>
+            <div class="pill">
+              ⚙️ <span id="tick">0</span><small>Ticks</small>
+            </div>
           </div>
-          <div class="pill">
-            🍓 <span id="stock">0</span><small>Stock</small>
-          </div>
-          <div class="pill">
-            📈 <span id="price">1.00</span><small>€/fruto</small>
-          </div>
-          <div class="pill">
-            🔒 <span id="reserve">0</span><small>10%</small>
-          </div>
-          <div class="pill">
-            ⚙️ <span id="tick">0</span><small>Ticks</small>
+          <div class="statbar">
+            <button class="btn" id="btnHarvest">🧺 Cosechar</button>
+            <button class="btn" id="btnSell">💰 Vender</button>
+            <button class="btn" id="btnShop">🛒 Mejoras</button>
+            <button class="btn" id="btnHints">💡 Pistas</button>
+            <button class="btn" id="btnPause">⏸️ Pausar</button>
+            <button class="btn" id="btnSave">💾 Guardar</button>
+            <button class="btn" id="btnReset">🔄 Reset</button>
           </div>
         </div>
-        <div class="statbar">
-          <button class="btn" id="btnHarvest">🧺 Cosechar</button>
-          <button class="btn" id="btnSell">💰 Vender</button>
-          <button class="btn" id="btnShop">🛒 Mejoras</button>
-          <button class="btn" id="btnHints">💡 Pistas</button>
-          <button class="btn" id="btnPause">⏸️ Pausar</button>
-          <button class="btn" id="btnSave">💾 Guardar</button>
-          <button class="btn" id="btnReset">🔄 Reset</button>
+        
+        <div class="title">
+          <pre>
+██  ██  ▄▄▄  ▄▄▄▄  ▄▄ ▄▄ ▄▄▄▄▄  ▄▄▄▄ ▄▄▄▄▄▄ 
+██████ ██▀██ ██▄█▄ ██▄██ ██▄▄  ███▄▄   ██   
+██  ██ ██▀██ ██ ██  ▀█▀  ██▄▄▄ ▄▄██▀   ██   
+          </pre>
+          <span>A game about growth.</span>
         </div>
       </header>
 
-      <aside class="panel">
+      <aside class="game-panel">
         <h3 class="section-title">Parcela (<span id="sizeLabel"></span>)</h3>
         <div class="grid" id="grid"></div>
         <p class="hint">
           Consejo: haz clic en una planta para ver su estado y acciones (regar,
           replantar, etc.).
         </p>
-        <div id="selected" class="panel" style="margin-top: 10px">
-          <h3>Planta seleccionada</h3>
-          <div id="plantInfo" class="muted">Ninguna.</div>
-          <div
-            id="actions"
-            style="display: flex; gap: 8px; margin-top: 8px"
-          ></div>
-        </div>
       </aside>
 
-      <div class="right-column">
+      <main class="game-panel">
+        <section class="panel" id="selectedPanel">
+          <h3 class="section-title">Planta seleccionada</h3>
+            <div id="plantInfo" class="muted">Ninguna.</div>
+            <div
+              id="actions"
+              style="display: flex; gap: 8px; margin-top: 8px"
+            ></div>
+        </section>
         <section class="panel" id="ownedPanel">
           <h3 class="section-title">Mejoras adquiridas</h3>
           <div id="ownedList" class="list"></div>
         </section>
-
-        <main class="panel">
+        <section class="panel" id="logPanel">
           <h3 class="section-title">Registro</h3>
           <div id="log" class="list"></div>
-        </main>
-      </div>
+        </section>
+      </main>
 
       <footer>
         Harvest - MVP. Guardado automático cada 30 segundos.
