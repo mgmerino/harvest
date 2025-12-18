@@ -20,6 +20,7 @@ const defaultState = () => ({
   growthLevel: 0, // multiplica la velocidad de crecimiento
   yieldLevel: 0, // multiplica la cosecha por planta
   plotCount: 0, // veces ampliada la parcela
+  harvestUpgrade: false, // permite usar el botón de cosecha global
   autos: { sprinkler: false, picker: false, vendor: false },
   field: Array(GRID_N * GRID_N)
     .fill(null)
@@ -109,7 +110,14 @@ function render() {
   const ids = ["btnHarvest", "btnSell", "btnShop", "btnHints", "btnSave", "btnReset"];
   ids.forEach((id) => {
     const b = document.getElementById(id);
-    if (b) b.disabled = S.paused;
+    if (b) {
+      // El botón de cosecha se desactiva si está en pausa O si no se ha comprado la mejora
+      if (id === "btnHarvest") {
+        b.disabled = S.paused || !S.harvestUpgrade;
+      } else {
+        b.disabled = S.paused;
+      }
+    }
   });
 
   // grid
@@ -411,6 +419,13 @@ function nextUpgradePrice(key) {
 
 const UPGRADES = [
   {
+    key: "harvest",
+    label: "Recolector (permite cosecha global)",
+    price: 5,
+    apply: () => S.harvestUpgrade = true,
+    oneTime: true, // se compra solo una vez
+  },
+  {
     key: "quality",
     label: "Fertilizante premium (+25% precio)",
     price: 30,
@@ -448,31 +463,46 @@ function renderShop() {
   UPGRADES.forEach((u) => {
     const row = document.createElement("div");
     row.className = "row";
-    const owned =
-      u.key === "quality"
-        ? S.qualityLevel
-        : u.key === "growth"
-          ? S.growthLevel
-          : u.key === "yield"
-            ? S.yieldLevel
-            : S.plotCount;
-    row.innerHTML = `<div>${u.label} ${owned ? `<span class="kbd">Nivel ${owned}</span>` : ""}</div>`;
+    
+    let owned = 0;
+    let alreadyPurchased = false;
+    
+    if (u.key === "harvest") {
+      alreadyPurchased = S.harvestUpgrade;
+      owned = alreadyPurchased ? 1 : 0;
+    } else if (u.key === "quality") {
+      owned = S.qualityLevel;
+    } else if (u.key === "growth") {
+      owned = S.growthLevel;
+    } else if (u.key === "yield") {
+      owned = S.yieldLevel;
+    } else if (u.key === "plot") {
+      owned = S.plotCount;
+    }
+    
+    row.innerHTML = `<div>${u.label} ${owned ? `<span class="kbd">${u.oneTime ? 'Comprado' : `Nivel ${owned}`}</span>` : ""}</div>`;
     const b = document.createElement("button");
     b.className = "btn primary";
-    const price = nextUpgradePrice(u.key);
-    b.textContent = `Comprar — ${price}€`;
-    b.disabled = S.money < price;
-    b.onclick = () => {
-      if (S.paused) return;
-      if (S.money >= price) {
-        S.money -= price;
-        u.apply();
-        log(
-          `Comprado: ${u.label}. Próximo precio: ${nextUpgradePrice(u.key)} €`,
-        );
-        render();
-      }
-    };
+    
+    if (u.oneTime && alreadyPurchased) {
+      b.textContent = "Comprado";
+      b.disabled = true;
+    } else {
+      const price = u.oneTime ? u.price : nextUpgradePrice(u.key);
+      b.textContent = `Comprar — ${price}€`;
+      b.disabled = S.money < price;
+      b.onclick = () => {
+        if (S.paused) return;
+        if (S.money >= price) {
+          S.money -= price;
+          u.apply();
+          const nextPriceText = u.oneTime ? "" : `. Próximo precio: ${nextUpgradePrice(u.key)} €`;
+          log(`Comprado: ${u.label}${nextPriceText}`);
+          render();
+        }
+      };
+    }
+    
     row.appendChild(b);
     shopUpgrades.appendChild(row);
   });
@@ -506,6 +536,15 @@ function renderOwnedPanel() {
   const list = document.getElementById("ownedList");
   if (!list) return;
   list.innerHTML = "";
+  
+  // Mostrar el recolector si está comprado
+  if (S.harvestUpgrade) {
+    const harvestRow = document.createElement("div");
+    harvestRow.className = "row";
+    harvestRow.innerHTML = `<div>Recolector</div><div><span class="kbd good">Comprado</span></div>`;
+    list.appendChild(harvestRow);
+  }
+  
   const entries = [
     {
       name: "Fertilizante premium",
@@ -524,7 +563,7 @@ function renderOwnedPanel() {
   });
   const labels = {
     sprinkler: "Aspersor",
-    picker: "Recolector",
+    picker: "Recolector Auto",
     vendor: "Vendedor",
   };
   const autosRow = document.createElement("div");
@@ -590,11 +629,16 @@ function migrateState() {
   });
   if (S.paused === undefined) S.paused = false;
   if (S.plotCount === undefined) S.plotCount = 0;
+  if (S.harvestUpgrade === undefined) S.harvestUpgrade = false;
 }
 
 /*** CONTROLES ***/
 document.getElementById("btnHarvest").onclick = () => {
   if (S.paused) return;
+  if (!S.harvestUpgrade) {
+    toast("Necesitas comprar el 'Recolector' en la tienda para usar la cosecha global.");
+    return;
+  }
   let total = 0;
   S.field.forEach((p) => {
     if (p && p.alive && p.stage === "ripe" && p.fruits > 0) {
